@@ -8,7 +8,10 @@ const dishes = require(path.resolve("src/data/dishes-data"));
 const nextId = require("../utils/nextId");
 
 
+// checking middleware
 
+
+// ensures body has data otherwise return an error
 const bodyHasData = (property) => {
   return (req, res, next) => {
     const { data = {}} = req.body;
@@ -22,6 +25,7 @@ const bodyHasData = (property) => {
   }
 }
 
+// matches seeked dish id with dish database for match
 const matchingDish = (req, res, next) => {
   const { dishId } = req.params;
   const { data: {id} = {}} = req.body;
@@ -38,7 +42,7 @@ const matchingDish = (req, res, next) => {
   }
 }
 
-
+// ensures that no entered is price is below 0 
 const validPrice = (req, res, next) => {
   const { data: { price } = {}} = req.body;
   if(Number(price) > 0 && typeof price === "number"){
@@ -51,13 +55,7 @@ const validPrice = (req, res, next) => {
   }
 }
 
-
-// TODO: Implement the /dishes handlers needed to make the tests pass
-function list(req, res, next ) {
-    res.status(200).json({data: dishes});
-
-}
-
+// searches for matching dish
 const dishExists = (req, res, next) => {
   const { dishId } = req.params;
   const foundDish = dishes.find((dish) => dish.id === dishId);
@@ -72,6 +70,13 @@ const dishExists = (req, res, next) => {
   }
 };
 
+// TODO: Implement the /dishes handlers needed to make the tests pass
+function list(req, res, next ) {
+    res.status(200).json({data: dishes});
+
+}
+
+// post hanlder 
 const create = (req, res) => {
   const {
     data: { name, description, price, image_url },
@@ -88,17 +93,16 @@ const create = (req, res) => {
 };
 
 
+//Get one dish
 const read = (req, res) => {
   const dish = res.locals.dish;
   res.json({ data: dish });
 };
-
-
+// update the dish
 const update = (req, res) => {
   const dish = res.locals.dish;
   
-  const {
-    data: { name, description, price, image_url },
+  const {data: { name, description, price, image_url },
   } = req.body;
 
   dish.name = name;
@@ -116,6 +120,7 @@ module.exports = {
   create: [
     bodyHasData("name"),
     bodyHasData("description"),
+    bodyHasData("price"),
     validPrice,
     bodyHasData("image_url"),
     create,
@@ -126,9 +131,11 @@ module.exports = {
     matchingDish,
     bodyHasData("name"),
     bodyHasData("description"),
+    bodyHasData("price"),
     validPrice,
     bodyHasData("image_url"),
     update,
   ],
   list,
 };
+
