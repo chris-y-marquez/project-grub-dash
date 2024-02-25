@@ -12,7 +12,7 @@ const nextId = require("../utils/nextId");
 
 
 // ensures body has data otherwise return an error
-const bodyHasData = (property) => {
+function bodyHasData (property) {
   return (req, res, next) => {
     const { data = {}} = req.body;
     if(data[property] && data[property] !== ''){
@@ -26,7 +26,7 @@ const bodyHasData = (property) => {
 }
 
 // matches seeked dish id with dish database for match
-const matchingDish = (req, res, next) => {
+function matchingDish (req, res, next) {
   const { dishId } = req.params;
   const { data: {id} = {}} = req.body;
   if(id){
@@ -43,7 +43,7 @@ const matchingDish = (req, res, next) => {
 }
 
 // ensures that no entered is price is below 0 
-const validPrice = (req, res, next) => {
+function validPrice (req, res, next) {
   const { data: { price } = {}} = req.body;
   if(Number(price) > 0 && typeof price === "number"){
     next();
@@ -56,7 +56,7 @@ const validPrice = (req, res, next) => {
 }
 
 // searches for matching dish
-const dishExists = (req, res, next) => {
+function dishExists (req, res, next) {
   const { dishId } = req.params;
   const foundDish = dishes.find((dish) => dish.id === dishId);
   if (foundDish) {
@@ -77,10 +77,8 @@ function list(req, res, next ) {
 }
 
 // post hanlder 
-const create = (req, res) => {
-  const {
-    data: { name, description, price, image_url },
-  } = req.body;
+function create (req, res) {
+  const { data: { name, description, price, image_url },} = req.body;
   const newDish = {
     id: nextId(),
     name,
@@ -94,12 +92,12 @@ const create = (req, res) => {
 
 
 //Get one dish
-const read = (req, res) => {
+function read (req, res) {
   const dish = res.locals.dish;
   res.json({ data: dish });
 };
 // update the dish
-const update = (req, res) => {
+function update (req, res) {
   const dish = res.locals.dish;
   
   const {data: { name, description, price, image_url },
